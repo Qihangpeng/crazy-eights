@@ -1,7 +1,10 @@
 package crazy.eights;
 
 /**
- * @author brendon-boldt
+ * Deck Class
+ * Uses ArrayList class to make a standard 52-card deck.
+ * @authors Krisztián Köves, Brendon Boldt
+ * @date 9/29/2014
  */
 
 import java.util.ArrayList;
