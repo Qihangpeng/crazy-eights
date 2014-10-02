@@ -3,7 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package crazyeights;
+package crazy.eights;
+
+//Here is a comment line.
 
 /**
  *
@@ -12,6 +14,7 @@ package crazyeights;
 public class Game {
     public static void main(String[] args) {
         Deck deck = new Deck();
+        deck.shuffle();
         deck.deal();
 //        System.out.println(Deck.drawPile.get(index));
     }

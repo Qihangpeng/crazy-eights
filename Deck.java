@@ -1,20 +1,35 @@
-package crazyeights;
+package crazy.eights;
 
 /**
  * @author brendon-boldt
  */
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Deck {
-    ArrayList drawPile = new ArrayList();
+    ArrayList<Card> drawPile;
+    ArrayList<ArrayList<Card>> hands;
     
     public Deck() {
+        this.drawPile = new ArrayList<>();
         for(int i = 0; i < Card.Suit.values().length; ++i) {
             for(int j = 0; j < Card.Rank.values().length; ++j) {
                 drawPile.add(new Card(Card.Rank.values()[j],Card.Suit.values()[i]));
             }
         }
+    }
+    
+    public void shuffle() {
+        ArrayList<Card> newPile = new ArrayList<>();
+        Random randIndex = new Random();
+        int index;
+        for(int i = drawPile.size(); i > 0; --i) {
+            index = randIndex.nextInt(i);
+            newPile.add(drawPile.get(index));
+            drawPile.remove(index);
+        }
+        drawPile = newPile;
     }
     
     public void deal() {

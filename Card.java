@@ -1,6 +1,5 @@
-/**
- * Auto Generated Java Class.
- */
+package crazy.eights;
+
 public class Card implements ICard {
   Rank rank;
   Suit suit;
@@ -28,6 +27,6 @@ public class Card implements ICard {
        
   @Override
   public String toString() {
-    return rank + " of " + suit;
+    return rank + "\tof\t" + suit;
   } 
 }
