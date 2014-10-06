@@ -1,0 +1,19 @@
+//        System.out.println(players.get(0).hand.size()+" "+deck.drawPile.size()+" "+deck.discardPile.size());
+//        Deck.Play res;
+//        do {
+//            res = deck.playCard(players.get(0).hand, 0);
+//        } while(res != Deck.Play.Win);
+//        System.out.println(players.get(0).hand.size()+" "+deck.drawPile.size()+" "+deck.discardPile.size());
+        deck.playCard(players.get(0).hand, 0);
+        System.out.println(deck.discardPile.get(deck.discardPile.size()-1));
+        while(deck.drawPile.size() > 0) {
+            deck.drawCard(players.get(0).hand);
+        }
+        System.out.println(deck.discardPile.get(deck.discardPile.size()-1));
+        while(players.get(0).hand.size() > 0) {
+            deck.playCard(players.get(0).hand, 0);
+        }
+        System.out.println(players.get(0).hand.size()+" "+deck.drawPile.size()+" "+deck.discardPile.size());
+        deck.drawCard(players.get(0).hand);
+        System.out.println(players.get(0).hand.size()+" "+deck.drawPile.size()+" "+deck.discardPile.size());
+        System.out.println(deck.discardPile.get(deck.discardPile.size()-1)); 
