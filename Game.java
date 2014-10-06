@@ -1,21 +1,26 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package crazy.eights;
-
-//Here is a comment line.
 
 /**
  *
  * @author brendon
  */
+
+import java.util.ArrayList;
+
 public class Game {
+    
+    
     public static void main(String[] args) {
         Deck deck = new Deck();
-        deck.shuffle();
-        deck.deal();
-//        System.out.println(Deck.drawPile.get(index));
+        ArrayList<Player> players = new ArrayList<>();
+        
+        
+        deck.shuffle(deck.drawPile);
+        players.add(new Player(deck.dealHand()));
+//        System.out.println(deck.discardPile.top());
+//        players.get(0).printHand();
+//        System.out.println(deck.playCard(players.get(0).hand, 7));
+//        System.out.println(deck.discardPile.top());
+        System.out.println(deck);
     }
 }

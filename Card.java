@@ -27,6 +27,6 @@ public class Card implements ICard {
        
   @Override
   public String toString() {
-    return rank + "\tof\t" + suit;
+    return rank + " of " + suit;
   } 
 }
