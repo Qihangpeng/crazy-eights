@@ -1,4 +1,4 @@
-package crazy.eights;
+package crazy8s;
 
 /**
  *

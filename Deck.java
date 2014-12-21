@@ -1,148 +1,160 @@
-<<<<<<< HEAD
-package crazy.eights;
+package crazy8s;
 
 /**
  * @author brendon-boldt
  */
-
+import crazy8s.Deck.Play;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
+/**
+ * Handles all cards on the field; deck is the only class that can actually
+ * make changes to the location/state of the cards. Note that the 0 index
+ * represents the top of a pile.
+ * @author brendon-boldt
+ */
 public class Deck {
-<<<<<<< HEAD
-    Pile<Card> drawPile;
-    Pile<Card> discardPile;
-    ArrayList<Pile<Card>> hands;
-    public final int handSize = 8;
-    
-    
+
+    protected ArrayList<Card> drawPile;
+    protected ArrayList<Card> discardPile;
+    protected HashMap<IPlayer, List<Card>> hands;
+    public final Integer handSize;
+
     public enum Play {
-        Valid, Invalid, Win;
+
+        Valid, Invalid, Win, OutOfCards;
     }
+
     
     public Deck() {
-        this.hands = new Pile<>();
-        this.discardPile = new Pile<>();
-        
-        this.drawPile = new Pile<>();
-        for(int i = 0; i < Card.Suit.values().length; ++i) {
-            for(int j = 0; j < Card.Rank.values().length; ++j) {
-                drawPile.add(new Card(Card.Rank.values()[j],Card.Suit.values()[i]));
+        this.handSize = 8;
+        this.discardPile = new ArrayList<>();
+
+        this.drawPile = new ArrayList<>();
+        for (int i = 0; i < Card.Suit.values().length; ++i) {
+            for (int j = 1; j <= 13; ++j) {
+                drawPile.add(new Card(j, Card.Suit.values()[i]));
             }
         }
-        this.discardPile.add(drawPile.remove(drawPile.size()-1));
+        this.discardPile.add(0,drawPile.remove(0));
     }
-    
+
     @Override
     public String toString() {
-        
-        return "Draw Pile\t"+drawPile.size()+" card(s)\nDiscard Pile\t"+discardPile.size()+" card(s)\t"+discardPile.top();
+        return "Draw Pile\t" 
+                + drawPile.size() 
+                + " card(s)\nDiscard Pile\t" 
+                + discardPile.size() 
+                + " card(s)\t" 
+                + discardPile.get(0);
     }
-    
+
     public void shuffle(ArrayList<Card> pile) {
         Random rand = new Random(0); // WILL NEED TO BE CHANGED
-        for(int i = 0; i < pile.size(); ++i) {
-            swap(i,rand.nextInt(pile.size()));
+        for (int i = 0; i < pile.size(); ++i) {
+            swap(i, rand.nextInt(pile.size()));
         }
     }
 
-    public void swap(int pos1, int pos2) {
+    protected void swap(int pos1, int pos2) {
         if ((pos1 >= 0 && pos1 < drawPile.size()) && (pos2 >= 0 && pos2 < drawPile.size())) {
             Card temp = drawPile.get(pos2);
             drawPile.set(pos2, drawPile.get(pos1));
             drawPile.set(pos1, temp);
         }
     }
-    
-    public Pile<Card> dealHand() {
-        Pile<Card> hand = new Pile<>();
+
+    public void dealHand(IPlayer argPlayer) {
+        hands.put(argPlayer, new ArrayList<>());
         for(int i = 0; i < handSize; ++i) {
-            hand.add(drawPile.remove(0));
+            hands.get(argPlayer).add(drawPile.remove(0));
         }
-        this.hands.add(hand);
-        return hands.get(hands.size()-1);
     }
-    
-    public void drawCard(Pile<Card> hand) {
-        if(!drawPile.isEmpty()) {
-            hand.add(drawPile.remove(drawPile.size()-1));
-        }
-        else if(discardPile.size() > 1) {
-            while(discardPile.size() > 1) {
+
+    public Play drawCard(IPlayer argPlayer) {
+        if(hasValidPlay(hands.get(argPlayer)))
+            return Play.Invalid;
+        
+        if (!drawPile.isEmpty()) {
+            hands.get(argPlayer).add(drawPile.remove(drawPile.size() - 1));
+        } else if (discardPile.size() > 1) {
+            while (discardPile.size() > 1) {
                 drawPile.add(discardPile.remove(0));
             }
             this.shuffle(drawPile);
-            hand.add(drawPile.remove(0));
+            hands.get(argPlayer).add(drawPile.remove(0));
+        } else {
+            return Play.OutOfCards;
         }
-        else {
-            this.outOfCards();
+        return Play.Valid;
+    }
+
+    
+    public boolean hasValidPlay(List<Card> cards) {
+        Boolean flag = false;
+        for (Card card : cards) {
+            flag |= isValidPlay(card);
         }
+        return flag;
     }
     
-    private boolean isValidPlay(Card card) {
-        return card.suit == discardPile.top().suit || card.rank == discardPile.top().rank;
-    }
+    /**
+     * This function is useful for IPlayer classes; thus it is static.
+     * @param cards
+     * @param discard
+     * @return 
+     */
+    public static boolean hasValidPlay(List<Card> cards, Card discard) {
+        Boolean flag = false;
+        for (Card card : cards) {
+            flag |= isValidPlay(card, discard);
+        }
+        return flag;
+    } 
     
-    public Play playCard(Pile<Card> hand, int index) {
-//        if(index >= 0 && index < hand.size()) {
-        if (this.isValidPlay(hand.get(index))) {
-            discardPile.add(hand.remove(index));
+    public boolean isValidPlay(Card card) {
+        return card.getSuit() == discardPile.get(0).getSuit()
+                || Objects.equals(card.getRank(), discardPile.get(0).getRank())
+                || Objects.equals(card.getRank(), 8);
+    }
+
+    /**
+     * Static for convenience
+     * @param card
+     * @param discard
+     * @return 
+     */
+    public static boolean isValidPlay(Card card, Card discard) {
+        return card.getSuit() == discard.getSuit()
+                || Objects.equals(card.getRank(), discard.getRank())
+                || Objects.equals(card.getRank(), 8);
+    }
+
+    
+    public Play playCard(List<Card> hand, int index) {
+        if (index >= 0 && index < hand.size()) {
+            if (this.isValidPlay(hand.get(index))) {
+//                System.out.println("Here!");
+                discardPile.add(0,hand.remove(index));
+            } else {
+                return Play.Invalid;
+            }
         }
-//        }
-        else {
-            return Play.Invalid;
-        }
-        
-        if(hand.isEmpty()) {
+
+        if (hand.isEmpty()) {
             return Play.Win;
-        }
-        else {
+        } else {
             return Play.Valid;
         }
     }
-    
-    public void outOfCards() {
-        System.out.println("Deck has run out of cards.");
-    }
-=======
-  ArrayList<Card> cards;
-  Random rand;
-  
-  public Deck() { 
-    cards = new ArrayList<Card>();
-    rand = new Random(0);
-    
-    for(Card.Rank r : Card.Rank.values()) {
-      for(Card.Suit s : Card.Suit.values())
-        cards.add(new Card(r,s));
+
+    public Play outOfCards() {
+        //System.out.println("Deck has run out of cards.");
+        return Play.OutOfCards;
     }
     
-    shuffle();
-  }
-  
-  @Override
-  public String toString() {
-    String s = "";
     
-    for(int i = 0; i < 10; ++i)
-      s = s + (i+1) + ". " + cards.get(i) + "\n";
-    
-    return s;
-  }
-  
-  public void shuffle() {
-    for(int index=0; index < cards.size(); index++) {
-      Card card1 = cards.get(index);
-      int lottery = rand.nextInt(cards.size());
-      Card card2 = cards.get(lottery);
-      cards.set(index,card2);
-      cards.set(lottery,card1);
-    }
-  }
-  
-  public static void main(String[] args) { 
-    Deck d = new Deck();
-    System.out.println(d);
-  }
->>>>>>> 65dab5a6fa88b7bf1079f70a3d9721926271f24d
 }
