@@ -13,7 +13,7 @@ import java.util.List;
 public class Field {
    protected final Deck deck;
    protected final HashMap<IPlayer, Integer> scores;
-   private final ArrayList<IPlayer> players;
+   protected final ArrayList<IPlayer> players;
    protected IPlayer currentPlayer;
    
    

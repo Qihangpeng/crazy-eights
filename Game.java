@@ -5,10 +5,15 @@ package crazy8s;
  * @author brendon-boldt
  */
 import crazy8s.Deck.Play;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Game {
 
@@ -23,20 +28,26 @@ public class Game {
     private static HashMap<IPlayer, Integer> scores = new HashMap<>();
 
     //private static HashMap<IPlayer, List<Card>> hands;
-
     /**
      * [Javadoc comment missing]
+     *
      * @param args
      */
     public static void main(String[] args) {
         field = new Field(deck, players, scores);
-        deck.shuffle(deck.drawPile);
-//        players.add(new Human(field, deck.dealHand()));
-//        players.add(new Computer(field, deck.dealHand()));
         players.add(new Human(field));
         players.add(new Computer(field));
-        dealHands();
-        gameLoop();
+        players.stream().forEach((player) -> scores.put(player, 0));
+        while (true) {
+            newGame();
+            dealHands();
+            gameLoop();
+        }
+    }
+
+    public static void newGame() {
+        deck.resetDeck();
+        deck.shuffle(deck.drawPile);
     }
 
     private static void dealHands() {
@@ -52,13 +63,43 @@ public class Game {
     protected static void gameLoop() {
         Integer command;
         Deck.Play status = Deck.Play.Valid;
-        while (status != Deck.Play.Win || status != Deck.Play.OutOfCards) {
-            for(IPlayer player : players) {
-               status = getCommand(player);
-               if ((status == Deck.Play.Win || status == Deck.Play.OutOfCards))
-                   break;
-           }
+        while (status != Deck.Play.Win && status != Deck.Play.OutOfCards) {
+            for (IPlayer player : players) {
+                status = getCommand(player);
+                if ((status == Deck.Play.Win || status == Deck.Play.OutOfCards)) {
+                    endGame(player);
+                    break;
+                }
+            }
         }
+    }
+
+    protected static void endGame(IPlayer argWinner) {
+        for (IPlayer player : players) {
+            for (Card card : player.getHand()) {
+                if (card.getRank() == 8) {
+                    scores.put(player, scores.get(player) + 50);
+                } else if (card.getRank() >= 10) {
+                    scores.put(player, scores.get(player) + 10);
+                } else {
+                    scores.put(player, scores.get(player) + card.getRank());
+                }
+            }
+        }
+
+        System.out.println("\n\n\n\n\n\n\n\n\n\n\nWinner: "
+                + argWinner
+                + "\n~~~Scores~~~");
+        for (IPlayer player : field.players) {
+            System.out.println(player + ": " + field.scores.get(player));
+        }
+        System.out.println("Press Enter to continue.");
+
+        try {
+            new BufferedReader(new InputStreamReader(System.in)).readLine();
+        } catch (IOException ex) {
+        }
+
     }
 
     /**
@@ -70,7 +111,7 @@ public class Game {
     protected static Play getCommand(IPlayer player) {
         Integer command;
         Play status = Play.Invalid;
-        while (status != Deck.Play.Win || status != Deck.Play.OutOfCards) {
+        while (status != Deck.Play.Win && status != Deck.Play.OutOfCards) {
             command = player.getCommand();
 
             if (Objects.equals(command, DRAW)) {
@@ -79,6 +120,8 @@ public class Game {
                 status = deck.playCard(deck.hands.get(player), command);
                 if (status == Deck.Play.Valid) {
                     break;
+                } else if (status == Deck.Play.Eight) {
+
                 } else {
                     continue;
                 }

@@ -89,7 +89,12 @@ public class Human implements IPlayer {
                         if (message.isEmpty())
                             message = "Invalid input.";
                         break;
-
+                    case "s":
+                        System.out.println("~~~Scores~~~");
+                        for(IPlayer player : field.players) {
+                            System.out.println(player + ": " + field.scores.get(player));
+                        }
+                        break;
                 }
             }
         } catch (Exception e) {
@@ -116,8 +121,9 @@ public class Human implements IPlayer {
 
     
     public void refreshDisplay(String message) {
-        System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n" 
-                + "Message: "
+        System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n");
+        System.out.println(
+                 "Message: "
                 + message
                 + "\nHand Sizes: "
                 + field.handSizesToString()
