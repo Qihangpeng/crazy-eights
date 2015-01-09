@@ -1,5 +1,9 @@
-package crazy8s;
+package crazy8s.game;
 
+
+import crazy8s.deck.Deck;
+import crazy8s.deck.Card;
+import crazy8s.player.IPlayer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,9 +15,9 @@ import java.util.List;
  * @author brendon-boldt
  */
 public class Field {
-   protected final Deck deck;
-   protected final HashMap<IPlayer, Integer> scores;
-   protected final ArrayList<IPlayer> players;
+   public final Deck deck;
+   public final HashMap<IPlayer, Integer> scores;
+   public final ArrayList<IPlayer> players;
    protected IPlayer currentPlayer;
    
    
@@ -35,7 +39,7 @@ public class Field {
        return Collections.unmodifiableList(deck.hands.get(argPlayer));
    }
 
-       protected String handSizesToString() {
+       public String handSizesToString() {
         String string = "";
         string = this.players.stream().map((player) ->
                 player + ": " + player.getHand().size() + "  ")

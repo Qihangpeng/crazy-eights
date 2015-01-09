@@ -1,6 +1,7 @@
-package crazy8s;
+package crazy8s.player;
 
-import crazy8s.Card.Suit;
+import crazy8s.deck.Card;
+import crazy8s.deck.Card.Suit;
 import java.util.List;
 
 /**

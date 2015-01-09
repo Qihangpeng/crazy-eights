@@ -1,19 +1,22 @@
-package crazy8s;
+package crazy8s.game;
 
 /**
  *
  * @author brendon-boldt
  */
-import crazy8s.Deck.Play;
+
+import crazy8s.deck.Card;
+import crazy8s.deck.Deck;
+import crazy8s.deck.Deck.Play;
+import crazy8s.player.Computer;
+import crazy8s.player.Human;
+import crazy8s.player.IPlayer;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Game {
 
@@ -25,7 +28,7 @@ public class Game {
     protected static ArrayList<IPlayer> players = new ArrayList<>();
     protected static Deck deck = new Deck();
     protected static Field field;
-    private static HashMap<IPlayer, Integer> scores = new HashMap<>();
+    private static final HashMap<IPlayer, Integer> scores = new HashMap<>();
 
     //private static HashMap<IPlayer, List<Card>> hands;
     /**
@@ -121,7 +124,8 @@ public class Game {
                 if (status == Deck.Play.Valid) {
                     break;
                 } else if (status == Deck.Play.Eight) {
-
+                    deck.discardPile.get(0).setSuit(player.getSuit());
+                    break;
                 } else {
                     continue;
                 }

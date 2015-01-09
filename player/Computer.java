@@ -1,7 +1,12 @@
-package crazy8s;
+package crazy8s.player;
 
-import crazy8s.Card.Suit;
+import crazy8s.game.Field;
+import crazy8s.game.Game;
+import crazy8s.deck.Card;
+import crazy8s.deck.Card.Suit;
+import crazy8s.deck.Deck;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -14,8 +19,7 @@ public class Computer implements IPlayer {
     protected final Field field;
     protected final String name;
     private static Integer constructorCount = 0;
-    
-    
+
 //    /**
 //     *
 //     * @param argField Defines local field instance
@@ -26,20 +30,19 @@ public class Computer implements IPlayer {
 //        this.hand = Collections.unmodifiableList(argHand);
 //        this.name = "Computer" + constructorCount++;
 //    }
-    
     public Computer(Field argField) {
         this.field = argField;
         this.name = "Computer" + constructorCount++;
     }
-    
+
     @Override
     public List<Card> getHand() {
-        return field.getHand(this);
+        return field.getHand((IPlayer) this);
     }
 
     @Override
     public Integer getCommand() {
-        if(!Deck.hasValidPlay(getHand(), field.deck.discardPile.get(0))) {
+        if (!Deck.hasValidPlay(getHand(), field.deck.discardPile.get(0))) {
             return Game.DRAW;
         } else {
             return findPlay();
@@ -48,21 +51,42 @@ public class Computer implements IPlayer {
 
     protected Integer findPlay() {
         Integer index = matchSuit(field.deck.discardPile.get(0).getSuit());
-        if(!index.equals(-1))
+        if (!index.equals(-1)) {
             return index;
+        }
         index = matchRank(field.deck.discardPile.get(0).getRank());
-        if(!index.equals(-1))
+        if (!index.equals(-1)) {
             return index;
+        }
         index = matchRank(8);
-        if(!index.equals(-1))
+        if (!index.equals(-1)) {
             return index;
-        
+        }
+
         return Game.DRAW;
     }
-    
+
     @Override
     public Suit getSuit() {
-        return null;
+        Card.Suit suit = null;
+        HashMap<Suit, Integer> suitCounts = new HashMap<>();
+        for (Card.Suit s : Card.Suit.values()) {
+            suitCounts.put(s, 0);
+        }
+        this.getHand().stream().forEach((card) -> {
+            if (card.getRank() != 8) {
+                suitCounts.put(card.getSuit(), suitCounts.get(card.getSuit()) + 1);
+            }
+        });
+        
+        Integer max = 0;
+        for (Card.Suit s : Card.Suit.values()) {
+            if(suitCounts.get(s) > max) {
+                max = suitCounts.get(s);
+                suit = s;
+            }
+        }   
+        return suit;
     }
 
     /**
@@ -72,14 +96,14 @@ public class Computer implements IPlayer {
      */
     public Integer matchSuit(Suit argSuit) {
 //        getHand().sort(Card.RankComparator);
-        for(int i = 0; i < getHand().size(); ++i) {
-            if(getHand().get(i).getSuit().equals(argSuit)) {
+        for (int i = 0; i < getHand().size(); ++i) {
+            if (getHand().get(i).getSuit().equals(argSuit)) {
                 return i;
-            }                
+            }
         }
         return -1;
     }
-    
+
     /**
      *
      * @param argRank
@@ -87,16 +111,17 @@ public class Computer implements IPlayer {
      */
     public Integer matchRank(Integer argRank) {
 //        getHand().sort(Card.RankComparator);
-        for(int i = 0; i < getHand().size(); ++i) {
-            if(getHand().get(i).getRank().equals(argRank)) {
+        for (int i = 0; i < getHand().size(); ++i) {
+            if (getHand().get(i).getRank().equals(argRank)) {
                 return i;
-            }                
+            }
         }
         return -1;
     }
-    
+
     @Override
     public String toString() {
         return this.name;
     }
+
 }

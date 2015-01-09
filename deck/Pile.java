@@ -1,4 +1,4 @@
-package crazy8s;
+package crazy8s.deck;
 
 /**
  *

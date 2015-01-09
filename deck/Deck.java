@@ -1,10 +1,10 @@
-package crazy8s;
+package crazy8s.deck;
 
 /**
  * @author brendon-boldt
  */
-import crazy8s.Deck.Play;
-import static crazy8s.Game.deck;
+
+import crazy8s.player.IPlayer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,9 +20,9 @@ import java.util.Random;
  */
 public class Deck {
 
-    protected ArrayList<Card> drawPile;
-    protected ArrayList<Card> discardPile;
-    protected HashMap<IPlayer, List<Card>> hands;
+    public ArrayList<Card> drawPile;
+    public ArrayList<Card> discardPile;
+    public HashMap<IPlayer, List<Card>> hands;
     public final Integer handSize;
     public Random rand;
 
@@ -33,7 +33,7 @@ public class Deck {
 
     public Deck() {
         rand = new Random(1); // WILL NEED TO BE CHANGED
-        this.handSize = 1;
+        this.handSize = 8;
         this.discardPile = new ArrayList<>();
 
         this.drawPile = new ArrayList<>();
@@ -56,7 +56,7 @@ public class Deck {
             }
         }
         this.discardPile.add(0, drawPile.remove(0));
-        shuffle(deck.drawPile);
+        shuffle(this.drawPile);
     }
 
     @Override

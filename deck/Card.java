@@ -1,4 +1,4 @@
-package crazy8s;
+package crazy8s.deck;
 
 import java.util.Comparator;
 
@@ -36,6 +36,15 @@ public class Card {
         return this.suit;
     }
 
+    /**
+     * Called when any player plays an eight. Since eights are wild; their suits
+     * can be changed at the will of the player.
+     * @param argSuit 
+     */
+    public void setSuit(Suit argSuit) {
+        this.suit = argSuit;
+    }
+    
     @Override
     public String toString() {
         //return rank + " of " + suit;

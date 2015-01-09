@@ -1,6 +1,11 @@
-package crazy8s;
+package crazy8s.player;
 
-import crazy8s.Card.Suit;
+
+import crazy8s.game.Field;
+import crazy8s.deck.Card;
+import crazy8s.deck.Card.Suit;
+import crazy8s.deck.Deck;
+import crazy8s.game.Game;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.List;
@@ -135,28 +140,30 @@ public class Human implements IPlayer {
 
     @Override
     public Suit getSuit() {
+        Suit suit = null;
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-            refreshDisplay("Input a suit (c,h,s,d).");
-            System.out.print(promptString);
-            
+            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));            
             String input;
-            Suit suit = null;
             
             do {
+                refreshDisplay("Input a suit (c,h,s,d).");
+                System.out.print(promptString);
                 input = in.readLine();
                 switch (input.trim().toLowerCase()) {
                     case("c"): suit = Suit.Clubs; break;
                     case("h"): suit = Suit.Hearts; break;
                     case("s"): suit = Suit.Spades; break;
                     case("d"): suit = Suit.Diamonds; break;
+                    default:   suit = null; break;
                 }
                         
-            } while (suit != null);
+            } while (suit == null);
+            
         }
         catch (Exception e) {
             
         }
-        return Suit.Clubs;
+        return suit;
     }
+
 }
